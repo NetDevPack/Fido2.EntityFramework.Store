@@ -1,0 +1,21 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:40468",
+      "sslPort": 44360
+    }
+  },
+  "profiles": {
+    "Fido2.Passwordless": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:7183;http://localhost:5183",
+      "dotnetRunMessages": true
+    }
+  }
+}
