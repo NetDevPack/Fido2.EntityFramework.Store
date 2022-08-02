@@ -15,6 +15,9 @@ builder.Services.AddFido2Context<ApplicationDbContext>();
 
 2. Change `ApplicationDbContext`
 ```csharp
+using NetDevPack.Fido2.EntityFramework.Store.Model;
+using NetDevPack.Fido2.EntityFramework.Store.Store;
+
 public class ApplicationDbContext : IdentityDbContext, IFido2Context
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
