@@ -25,9 +25,6 @@ namespace Fido2.Passwordless.Models
 
         public class LoginModel
         {
-            [Required]
-            public string DisplayName { get; set; }
-            [Required]
             public bool RememberMe { get; set; }
 
             public string? AssertionResponse { get; set; }

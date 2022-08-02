@@ -178,7 +178,7 @@ namespace Fido2.Passwordless.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult> GetAssertionOptions([FromQuery] UsernamelessModel.LoginModel query)
+        public async Task<ActionResult> GetAssertionOptions()
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -186,13 +186,6 @@ namespace Fido2.Passwordless.Controllers
             try
             {
                 var existingCredentials = new List<PublicKeyCredentialDescriptor>();
-
-                if (!string.IsNullOrEmpty(query.DisplayName))
-                {
-
-                    // 1. Get registered credentials from database
-                    existingCredentials = (await _fido2Store.ListPublicKeysByUser(query.DisplayName.Urlize())).ToList();
-                }
 
                 var exts = new AuthenticationExtensionsClientInputs()
                 {

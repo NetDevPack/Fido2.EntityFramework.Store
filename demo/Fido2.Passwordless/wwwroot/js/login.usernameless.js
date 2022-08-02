@@ -3,18 +3,10 @@
 async function handleSignInSubmit(event) {
     event.preventDefault();
 
-    let displayName = document.getElementById('DisplayName').value;
-    let rememberMe = document.getElementById('RememberMe').value;
-
-    // prepare form post data
-    var queryData = new FormData();
-    queryData.append('displayName', displayName);
-    queryData.append('rememberMe', rememberMe);
-
     // send to server for registering
     let makeAssertionOptions;
     try {
-        var res = await fetch(urlAssertionOptions + '?' + new URLSearchParams(queryData), {
+        var res = await fetch(urlAssertionOptions, {
             method: 'GET',
             headers: {
                 'Accept': 'application/json'
