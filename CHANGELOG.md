@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v1.0.0...v1.0.1) (2022-08-02)
+
+
+### Bug Fixes
+
+* package info ([15f25a5](https://github.com/NetDevPack/Fido2.EntityFramework.Store/commit/15f25a5c60f1247c5e3724735cf926ddb6fbd764))
+
 # 1.0.0 (2022-08-02)
 
 
