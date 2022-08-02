@@ -2,7 +2,7 @@ name: NetDevPack - MASTER PR
 
 on:
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   pull-request:

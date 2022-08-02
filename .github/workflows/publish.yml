@@ -1,8 +1,8 @@
-name: NetDevPack - MASTER Publish
+name: NetDevPack - MAIN Publish
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 env:
   REPOSITORY_URL: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
