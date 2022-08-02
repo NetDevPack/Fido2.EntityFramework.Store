@@ -26,7 +26,7 @@ public class ApplicationDbContext : IdentityDbContext, IFido2Context
 }
 ```
 
-3. Now you can inject `IFido2Store` and save and recover `StoredCredential`
+3. Now you can inject `IFido2Store` to save and recover `StoredCredential`
 
 ## Demo
 
