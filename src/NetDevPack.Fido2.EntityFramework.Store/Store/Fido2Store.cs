@@ -39,7 +39,7 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Store
 
         public async Task<StoredCredential> GetCredentialByPublicKeyIdAsync(byte[] credentialId)
         {
-            var users = await _context.Fido2StoredCredential.AsNoTrackingWithIdentityResolution().FirstAsync(w => w.PublicKeyId == credentialId);
+            var users = await _context.Fido2StoredCredential.AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync(w => w.PublicKeyId == credentialId);
             if (users == null)
                 return null;
 
