@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v1.0.6...v1.1.0) (2022-08-26)
+
+
+### Features
+
+* fido2user ([82d4deb](https://github.com/NetDevPack/Fido2.EntityFramework.Store/commit/82d4debef4e0c42bc2e5261dbd190569d35f0d98))
+
 ## [1.0.6](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v1.0.5...v1.0.6) (2022-08-25)
 
 
