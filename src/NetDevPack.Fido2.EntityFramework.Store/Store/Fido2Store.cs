@@ -84,5 +84,28 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Store
         {
             return _context.Fido2StoredCredential.AsNoTrackingWithIdentityResolution().Where(w => w.Username == username.ToLower().Trim()).ToListAsync();
         }
+
+        public async Task<bool> RemoveByPublicKeyId(byte[] publicKeyId)
+        {
+            var key = await _context.Fido2StoredCredential.FirstOrDefaultAsync(f => f.PublicKeyId == publicKeyId);
+            if (key is not null)
+            {
+                _context.Fido2StoredCredential.Remove(key);
+                return _context.SaveChanges() > 0;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> RemoveBySecretName(string name)
+        {
+            var key = await _context.Fido2StoredCredential.FirstOrDefaultAsync(f => f.SecurityKeyName == name);
+            if (key is not null)
+            {
+                _context.Fido2StoredCredential.Remove(key);
+                return _context.SaveChanges() > 0;
+            }
+            return false;
+        }
     }
 }

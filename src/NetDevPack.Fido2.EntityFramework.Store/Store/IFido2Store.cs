@@ -18,4 +18,6 @@ public interface IFido2Store
     Task<string?> GetUsernameByIdAsync(byte[] userId);
     Task<List<StoredCredentialDetail>> ListCredentialDetailsByUser(byte[] userId);
     Task<List<StoredCredentialDetail>> ListCredentialDetailsByUser(string username);
+    Task<bool> RemoveByPublicKeyId(byte[] publicKeyId);
+    Task<bool> RemoveBySecretName(string name);
 }
