@@ -20,4 +20,5 @@ public interface IFido2Store
     Task<List<StoredCredentialDetail>> ListCredentialDetailsByUser(string username);
     Task<bool> RemoveByPublicKeyId(byte[] publicKeyId);
     Task<bool> RemoveBySecretName(string name);
+    Task<bool> HasSecurityKey(string name);
 }

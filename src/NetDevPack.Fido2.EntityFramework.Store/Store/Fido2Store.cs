@@ -107,5 +107,10 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Store
             }
             return false;
         }
+
+        public async Task<bool> HasSecurityKey(string name)
+        {
+            return await _context.Fido2StoredCredential.AnyAsync(f => f.SecurityKeyName == name);
+        }
     }
 }
