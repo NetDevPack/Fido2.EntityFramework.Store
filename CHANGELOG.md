@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v1.1.0...v1.2.0) (2022-08-26)
+
+
+### Features
+
+* remove ([dea26ce](https://github.com/NetDevPack/Fido2.EntityFramework.Store/commit/dea26ce45549ac7fc3c3032ee2c89283c0238e91))
+
 # [1.1.0](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v1.0.6...v1.1.0) (2022-08-26)
 
 
