@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v1.2.0...v1.2.1) (2022-08-26)
+
+
+### Bug Fixes
+
+* haskey ([0336ecc](https://github.com/NetDevPack/Fido2.EntityFramework.Store/commit/0336ecc5b1180ea42efad8c7b1265b2c301e2125))
+
 # [1.2.0](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v1.1.0...v1.2.0) (2022-08-26)
 
 
