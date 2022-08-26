@@ -80,7 +80,19 @@ namespace Fido2.Passwordless.Controllers
             {
                 Email = options.User.Name
             };
-            _fido2Store.Store(user.UserName, new StoredCredential
+
+            // 4. Create user at ASP.NET Identity
+            var result = await _userManager.CreateAsync(user);
+            var createdUser = await _userManager.FindByEmailAsync(options.User.Name);
+
+            var fidoUser = new Fido2User
+            {
+                DisplayName = createdUser.UserName,
+                Name = createdUser.UserName,
+                Id = Encoding.UTF8.GetBytes(createdUser.Id) // byte representation of userID is required
+            };
+
+            _fido2Store.Store("some-random-alias", fidoUser, new StoredCredential
             {
                 Descriptor = new PublicKeyCredentialDescriptor(success.Result.CredentialId),
                 PublicKey = success.Result.PublicKey,
@@ -91,8 +103,6 @@ namespace Fido2.Passwordless.Controllers
                 AaGuid = success.Result.Aaguid
             });
 
-            // 4. Create user at ASP.NET Identity
-            var result = await _userManager.CreateAsync(user);
 
             // 5. Default ASP.NET Identity flow. (e-mail confirmation, ReturnUrl, etc.)
             if (result.Succeeded)

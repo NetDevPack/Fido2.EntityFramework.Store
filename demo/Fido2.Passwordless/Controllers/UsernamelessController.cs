@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NetDevPack.Fido2.EntityFramework.Store.Store;
 using NetDevPack.Utilities;
+using System.Text;
 using System.Text.Json;
 
 namespace Fido2.Passwordless.Controllers
@@ -75,7 +76,19 @@ namespace Fido2.Passwordless.Controllers
             {
                 EmailConfirmed = true
             };
-            _fido2Store.Store(user.UserName, new StoredCredential
+
+            // 4. Create user at ASP.NET Identity
+            var result = await _userManager.CreateAsync(user);
+            var createdUser = await _userManager.FindByEmailAsync(user.UserName);
+
+            var fidoUser = new Fido2User
+            {
+                DisplayName = createdUser.UserName,
+                Name = createdUser.UserName,
+                Id = Encoding.UTF8.GetBytes(createdUser.Id) // byte representation of userID is required
+            };
+
+            _fido2Store.Store("Default", fidoUser, new StoredCredential
             {
                 Descriptor = new PublicKeyCredentialDescriptor(success.Result.CredentialId),
                 PublicKey = success.Result.PublicKey,
@@ -86,8 +99,6 @@ namespace Fido2.Passwordless.Controllers
                 AaGuid = success.Result.Aaguid
             });
 
-            // 4. Create user at ASP.NET Identity
-            var result = await _userManager.CreateAsync(user);
 
             // 5. Default ASP.NET Identity flow. (No need for e-mail confirmation, since there is no e-mail involved)
             if (result.Succeeded)

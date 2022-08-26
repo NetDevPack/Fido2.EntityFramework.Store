@@ -4,12 +4,12 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Mappers;
 
 internal static class StoredCredentialMapper
 {
-    public static StoredCredential ToModel(Fido2NetLib.Development.StoredCredential domain)
+    public static StoredCredentialDetail ToModel(Fido2NetLib.Development.StoredCredential domain)
     {
         string transports = null;
         if (domain.Descriptor.Transports != null)
             transports = string.Join(";", domain.Descriptor.Transports);
-        return new StoredCredential
+        return new StoredCredentialDetail
         {
             UserId = domain.UserId,
             PublicKey = domain.PublicKey,
@@ -25,7 +25,7 @@ internal static class StoredCredentialMapper
         };
     }
 
-    public static Fido2NetLib.Development.StoredCredential ToDomain(StoredCredential model)
+    public static Fido2NetLib.Development.StoredCredential ToDomain(StoredCredentialDetail model)
     {
         return new Fido2NetLib.Development.StoredCredential
         {

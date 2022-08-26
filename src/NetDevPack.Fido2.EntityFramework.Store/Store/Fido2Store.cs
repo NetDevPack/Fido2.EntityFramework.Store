@@ -1,8 +1,10 @@
-﻿using Fido2NetLib.Development;
+﻿using Fido2NetLib;
+using Fido2NetLib.Development;
 using Fido2NetLib.Objects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NetDevPack.Fido2.EntityFramework.Store.Mappers;
+using NetDevPack.Fido2.EntityFramework.Store.Model;
 
 namespace NetDevPack.Fido2.EntityFramework.Store.Store
 {
@@ -44,9 +46,9 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Store
             return StoredCredentialMapper.ToDomain(users);
         }
 
-        public void Store(string userName, StoredCredential storedCredential)
+        public void Store(string securityKeyAlias, Fido2User user, StoredCredential storedCredential)
         {
-            var model = StoredCredentialMapper.ToModel(storedCredential).SetUsername(userName);
+            var model = StoredCredentialMapper.ToModel(storedCredential).UpdateUserDetails(user).SetSecurityKeyName(securityKeyAlias);
             _context.Fido2StoredCredential.Add(model);
             _context.SaveChanges();
         }
@@ -61,13 +63,26 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Store
         public async Task UpdateCounter(byte[] credentialId, uint counter)
         {
             var cred = await _context.Fido2StoredCredential.FirstOrDefaultAsync(f => f.PublicKeyId == credentialId);
-            cred.SignatureCounter = counter;
-            _context.SaveChanges();
+            if (cred != null)
+            {
+                cred.SignatureCounter = counter;
+                _context.SaveChanges();
+            }
         }
 
-        public Task<string> GetUsernameByIdAsync(byte[] userId)
+        public Task<string?> GetUsernameByIdAsync(byte[] userId)
         {
             return _context.Fido2StoredCredential.AsNoTrackingWithIdentityResolution().Where(w => w.UserId == userId).Select(s => s.Username).FirstOrDefaultAsync();
+        }
+
+        public Task<List<StoredCredentialDetail>> ListCredentialDetailsByUser(byte[] userId)
+        {
+            return _context.Fido2StoredCredential.AsNoTrackingWithIdentityResolution().Where(w => w.UserId == userId).ToListAsync();
+        }
+
+        public Task<List<StoredCredentialDetail>> ListCredentialDetailsByUser(string username)
+        {
+            return _context.Fido2StoredCredential.AsNoTrackingWithIdentityResolution().Where(w => w.Username == username.ToLower().Trim()).ToListAsync();
         }
     }
 }

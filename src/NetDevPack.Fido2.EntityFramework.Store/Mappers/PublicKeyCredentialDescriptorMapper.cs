@@ -6,7 +6,7 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Mappers;
 
 internal static class PublicKeyCredentialDescriptorMapper
 {
-    public static Fido2NetLib.Objects.PublicKeyCredentialDescriptor ToDomain(StoredCredential model)
+    public static Fido2NetLib.Objects.PublicKeyCredentialDescriptor ToDomain(StoredCredentialDetail model)
     {
 
         return new Fido2NetLib.Objects.PublicKeyCredentialDescriptor

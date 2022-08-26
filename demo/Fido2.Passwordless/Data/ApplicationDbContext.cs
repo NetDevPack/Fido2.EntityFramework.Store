@@ -12,6 +12,6 @@ namespace Fido2.Passwordless.Data
         {
         }
 
-        public DbSet<StoredCredential> Fido2StoredCredential { get; set; }
+        public DbSet<StoredCredentialDetail> Fido2StoredCredential { get; set; }
     }
 }

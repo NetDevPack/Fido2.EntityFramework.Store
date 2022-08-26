@@ -5,5 +5,5 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Store;
 
 public interface IFido2Context
 {
-    DbSet<StoredCredential> Fido2StoredCredential { get; set; }
+    DbSet<StoredCredentialDetail> Fido2StoredCredential { get; set; }
 }
