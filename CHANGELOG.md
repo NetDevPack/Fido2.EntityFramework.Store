@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v1.3.0...v2.0.0) (2022-11-17)
+
+
+### Features
+
+* net 7 ([d53670e](https://github.com/NetDevPack/Fido2.EntityFramework.Store/commit/d53670e4d497ec4c72c4fb47db0cd26b913afe09))
+
+
+### BREAKING CHANGES
+
+* dotnet 7
+
 # [1.3.0](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v1.2.2...v1.3.0) (2022-11-17)
 
 
