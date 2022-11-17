@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Authors>Bruno Brito</Authors>
@@ -16,15 +16,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fido2" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.4" />
+    <PackageReference Include="Fido2" Version="3.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
   </ItemGroup>
 
 
-  <Target Name="CopyHook" AfterTargets="AfterBuild" Condition=" '$(Configuration)' == 'Debug' ">
+  <Target Name="CopyHook" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Debug'">
     <ItemGroup>
       <_CustomFiles Include="../../.github/hooks/commit-msg" />
     </ItemGroup>
-    <Copy SourceFiles="@(_CustomFiles)" DestinationFolder="../../.git/hooks" />
+    <Copy SourceFiles="@(_CustomFiles)" DestinationFolder="../../.git/hooks"  />
   </Target>
 </Project>
