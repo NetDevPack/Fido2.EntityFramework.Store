@@ -34,5 +34,3 @@ public class ApplicationDbContext : IdentityDbContext, IFido2Context
 ## Demo
 
 Check demo at Source Code.
-
-.
