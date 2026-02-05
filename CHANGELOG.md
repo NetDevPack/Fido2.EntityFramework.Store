@@ -1,3 +1,20 @@
+# [3.0.0](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v2.0.0...v3.0.0) (2026-02-05)
+
+
+### Bug Fixes
+
+* github actions ([6d5e3c3](https://github.com/NetDevPack/Fido2.EntityFramework.Store/commit/6d5e3c3a58566d281313cbfa0021d84fd3d641ae))
+
+
+### Features
+
+* **runtime:** upgrade to latest .NET version ([dc91acd](https://github.com/NetDevPack/Fido2.EntityFramework.Store/commit/dc91acd8a786c1c63668c6b88de3999962f8b621))
+
+
+### BREAKING CHANGES
+
+* **runtime:** dropped support for non-LTS .NET versions
+
 # [2.0.0](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v1.3.0...v2.0.0) (2022-11-17)
 
 
