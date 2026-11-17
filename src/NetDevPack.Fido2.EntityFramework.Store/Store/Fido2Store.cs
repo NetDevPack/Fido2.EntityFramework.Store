@@ -1,5 +1,4 @@
 ﻿using Fido2NetLib;
-using Fido2NetLib.Development;
 using Fido2NetLib.Objects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -37,7 +36,7 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Store
             return users.Select(StoredCredentialMapper.ToDomain);
         }
 
-        public async Task<StoredCredential> GetCredentialByPublicKeyIdAsync(byte[] credentialId)
+        public async Task<StoredCredential?> GetCredentialByPublicKeyIdAsync(byte[] credentialId)
         {
             var users = await _context.Fido2StoredCredential.AsNoTrackingWithIdentityResolution().FirstOrDefaultAsync(w => w.PublicKeyId == credentialId);
             if (users == null)
@@ -60,13 +59,15 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Store
         }
 
 
-        public async Task UpdateCounter(byte[] credentialId, uint counter)
+        public async Task UpdateCounter(byte[] credentialId, uint counter, bool? isBackedUp = null)
         {
             var cred = await _context.Fido2StoredCredential.FirstOrDefaultAsync(f => f.PublicKeyId == credentialId);
             if (cred != null)
             {
                 cred.SignatureCounter = counter;
-                _context.SaveChanges();
+                if (isBackedUp.HasValue)
+                    cred.IsBackedUp = isBackedUp.Value;
+                await _context.SaveChangesAsync();
             }
         }
 

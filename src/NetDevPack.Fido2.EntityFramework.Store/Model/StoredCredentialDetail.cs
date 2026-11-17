@@ -39,6 +39,16 @@ public class StoredCredentialDetail
     public PublicKeyCredentialType? Type { get; set; }
     public string? Transports { get; set; }
 
+    /// <summary>
+    /// Backup Eligibility (BE) flag. Added in 4.0 (Fido2 4). Rows created by older versions default to <c>false</c>.
+    /// </summary>
+    public bool IsBackupEligible { get; set; }
+
+    /// <summary>
+    /// Backup State (BS) flag. Added in 4.0 (Fido2 4). Updated on every successful assertion.
+    /// </summary>
+    public bool IsBackedUp { get; set; }
+
     public StoredCredentialDetail UpdateUserDetails(Fido2User user)
     {
         Username = user.Name;
