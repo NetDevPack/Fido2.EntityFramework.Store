@@ -1,10 +1,10 @@
 ﻿using Fido2.Passwordless.Models;
 using Fido2NetLib;
-using Fido2NetLib.Development;
 using Fido2NetLib.Objects;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NetDevPack.Fido2.EntityFramework.Store.Model;
 using NetDevPack.Fido2.EntityFramework.Store.Store;
 using NetDevPack.Utilities;
 using System.Text;
@@ -69,7 +69,12 @@ namespace Fido2.Passwordless.Controllers
             };
 
             // 2. Verify and make the credentials
-            var success = await _fido2.MakeNewCredentialAsync(response, options, callback);
+            var credential = await _fido2.MakeNewCredentialAsync(new MakeNewCredentialParams
+            {
+                AttestationResponse = response,
+                OriginalOptions = options,
+                IsCredentialIdUniqueToUserCallback = callback
+            });
 
             // 3. Store the credentials in db
             var user = new IdentityUser(model.DisplayName.Urlize())
@@ -88,16 +93,7 @@ namespace Fido2.Passwordless.Controllers
                 Id = Encoding.UTF8.GetBytes(createdUser.Id) // byte representation of userID is required
             };
 
-            _fido2Store.Store("Default", fidoUser, new StoredCredential
-            {
-                Descriptor = new PublicKeyCredentialDescriptor(success.Result.CredentialId),
-                PublicKey = success.Result.PublicKey,
-                UserHandle = success.Result.User.Id,
-                SignatureCounter = success.Result.Counter,
-                CredType = success.Result.CredType,
-                RegDate = DateTime.Now,
-                AaGuid = success.Result.Aaguid
-            });
+            _fido2Store.Store("Default", fidoUser, StoredCredential.FromRegisteredCredential(credential, DateTime.Now));
 
 
             // 5. Default ASP.NET Identity flow. (No need for e-mail confirmation, since there is no e-mail involved)
@@ -139,9 +135,9 @@ namespace Fido2.Passwordless.Controllers
             var options = AssertionOptions.FromJson(jsonOptions);
 
             // 2. Get registered credential from database
-            var creds = await _fido2Store.GetCredentialByPublicKeyIdAsync(clientResponse.Id);
+            var creds = await _fido2Store.GetCredentialByPublicKeyIdAsync(clientResponse.RawId);
             if (creds is null)
-                return Json(new AssertionVerificationResult { Status = "error", ErrorMessage = "Unknown Credentials" });
+                return Json(new { status = "error", errorMessage = "Unknown Credentials" });
 
             // 3. Get credential counter from database
             var storedCounter = creds.SignatureCounter;
@@ -153,14 +149,29 @@ namespace Fido2.Passwordless.Controllers
                 return storedCreds.ToList().Exists(c => c.Descriptor.Id.SequenceEqual(args.CredentialId));
             };
 
-            // 5. Make the assertion
-            var res = await _fido2.MakeAssertionAsync(clientResponse, options, creds.PublicKey, storedCounter, callback);
+            // 5. Make the assertion. Fido2 4 throws Fido2VerificationException when the assertion is not valid
+            VerifyAssertionResult? res = null;
+            try
+            {
+                res = await _fido2.MakeAssertionAsync(new MakeAssertionParams
+                {
+                    AssertionResponse = clientResponse,
+                    OriginalOptions = options,
+                    StoredPublicKey = creds.PublicKey,
+                    StoredSignatureCounter = storedCounter,
+                    IsUserHandleOwnerOfCredentialIdCallback = callback
+                });
 
-            // 6. Store the updated counter
-            await _fido2Store.UpdateCounter(res.CredentialId, res.Counter);
+                // 6. Store the updated counter and backup state
+                await _fido2Store.UpdateCounter(res.CredentialId, res.SignCount, res.IsBackedUp);
+            }
+            catch (Fido2VerificationException e)
+            {
+                _logger.LogWarning(e, "Invalid assertion.");
+            }
 
             // Login at ASP.NET Identity
-            if (res.Status == "ok")
+            if (res is not null)
             {
 
                 returnUrl ??= Url.Content("~/");
@@ -204,11 +215,12 @@ namespace Fido2.Passwordless.Controllers
                 };
 
                 // 2. Create options
-                var options = _fido2.GetAssertionOptions(
-                    existingCredentials,
-                    UserVerificationRequirement.Discouraged,
-                    exts
-                );
+                var options = _fido2.GetAssertionOptions(new GetAssertionOptionsParams
+                {
+                    AllowedCredentials = existingCredentials,
+                    UserVerification = UserVerificationRequirement.Discouraged,
+                    Extensions = exts
+                });
 
                 // 3. Temporarily store options, session/in-memory cache/redis/db
                 var cookieOptions = new CookieOptions()
@@ -226,7 +238,7 @@ namespace Fido2.Passwordless.Controllers
 
             catch (Exception e)
             {
-                return Json(new AssertionOptions { Status = "error", ErrorMessage = FormatException(e) });
+                return Json(new { status = "error", errorMessage = FormatException(e) });
             }
         }
 
@@ -246,7 +258,7 @@ namespace Fido2.Passwordless.Controllers
             // 2. Create options
             var authenticatorSelection = new AuthenticatorSelection
             {
-                RequireResidentKey = true,
+                ResidentKey = ResidentKeyRequirement.Required,
                 UserVerification = UserVerificationRequirement.Preferred
             };
 
@@ -256,7 +268,14 @@ namespace Fido2.Passwordless.Controllers
                 UserVerificationMethod = true,
             };
 
-            var options = _fido2.RequestNewCredential(fidoUser, existingKeys.ToList(), authenticatorSelection, AttestationConveyancePreference.None, exts);
+            var options = _fido2.RequestNewCredential(new RequestNewCredentialParams
+            {
+                User = fidoUser,
+                ExcludeCredentials = existingKeys.ToList(),
+                AuthenticatorSelection = authenticatorSelection,
+                AttestationPreference = AttestationConveyancePreference.None,
+                Extensions = exts
+            });
 
             // 3. Temporarily store options, session/in-memory cache/redis/db 
             var cookieOptions = new CookieOptions()

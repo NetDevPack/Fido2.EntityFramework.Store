@@ -24,7 +24,7 @@ async function handleRegisterSubmit(event) {
 
     console.log("Credential Options Object", makeCredentialOptions);
 
-    if (makeCredentialOptions.status !== "ok") {
+    if (makeCredentialOptions.status === "error") {
         console.log("Error creating credential options");
         console.log(makeCredentialOptions.errorMessage);
         showErrorAlert(makeCredentialOptions.errorMessage);

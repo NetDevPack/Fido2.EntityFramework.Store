@@ -1,41 +1,47 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>NetDevPack.Fido2.EntityFramework.Store</PackageId>
     <Authors>Bruno Brito</Authors>
-    <PackageIconUrl>https://raw.githubusercontent.com/NetDevPack/NetDevPack/master/assets/IconNuget.png</PackageIconUrl>
-    <PackageTags>Fido2 EntityFramework EF</PackageTags>
+    <Company>NetDevPack</Company>
+    <PackageTags>Fido2 WebAuthn Passkeys EntityFramework EF</PackageTags>
     <Title>Fido2 EntityFramework Store</Title>
-    <Description>Thin wrapper around Fido2</Description>
+    <Description>Entity Framework Core store for the Fido2 (WebAuthn / passkeys) library, integrated with ASP.NET Core Identity.</Description>
     <NeutralLanguage>en</NeutralLanguage>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>IconNuget.png</PackageIcon>
+    <PackageReadmeFile>README.MD</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/NetDevPack/Fido2.EntityFramework.Store</PackageProjectUrl>
     <RepositoryUrl>https://github.com/NetDevPack/Fido2.EntityFramework.Store</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <RepositoryBranch>main</RepositoryBranch>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Fido2" Version="3.0.1" />
+    <PackageReference Include="Fido2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.23" />
+  <ItemGroup>
+    <None Include="..\..\assets\IconNuget.png" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="..\..\README.MD" Pack="true" PackagePath="\" Visible="false" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.12" />
+  <ItemGroup>
+    <InternalsVisibleTo Include="NetDevPack.Fido2.EntityFramework.Store.Tests" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
-  </ItemGroup>
-
-
-  <Target Name="CopyHook" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Debug'">
+  <Target Name="CopyHook" AfterTargets="AfterBuild" Condition="'$(Configuration)' == 'Debug' And '$(CI)' != 'true'">
     <ItemGroup>
-      <_CustomFiles Include="../../.github/hooks/commit-msg" />
+      <_CustomFiles Include="$(MSBuildThisFileDirectory)../../.github/hooks/commit-msg" />
     </ItemGroup>
-    <Copy SourceFiles="@(_CustomFiles)" DestinationFolder="../../.git/hooks"  />
+    <Copy SourceFiles="@(_CustomFiles)" DestinationFolder="$(MSBuildThisFileDirectory)../../.git/hooks" Condition="Exists('$(MSBuildThisFileDirectory)../../.git')" />
   </Target>
 </Project>

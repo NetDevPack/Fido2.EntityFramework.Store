@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Fido2NetLib;
+﻿using Fido2NetLib;
 using Fido2NetLib.Objects;
 using NetDevPack.Fido2.EntityFramework.Store.Model;
 
@@ -8,19 +6,42 @@ namespace NetDevPack.Fido2.EntityFramework.Store.Mappers;
 
 internal static class PublicKeyCredentialDescriptorMapper
 {
-    public static Fido2NetLib.Objects.PublicKeyCredentialDescriptor ToDomain(StoredCredentialDetail model)
+    public static PublicKeyCredentialDescriptor ToDomain(StoredCredentialDetail model)
     {
-        var transports = string.IsNullOrWhiteSpace(model.Transports)
-            ? null
-            : model.Transports.Split(';', StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => s.ToEnum<AuthenticatorTransport>())
-                .ToArray();
+        return new PublicKeyCredentialDescriptor(
+            model.Type ?? PublicKeyCredentialType.PublicKey,
+            model.PublicKeyId,
+            ParseTransports(model.Transports));
+    }
 
-        return new PublicKeyCredentialDescriptor
+    /// <summary>
+    /// Transports are stored as a ';' separated list of enum names (e.g. "Usb;Internal").
+    /// Accepts enum names (any case) and WebAuthn values (e.g. "usb", "smart-card"); unknown values are ignored.
+    /// </summary>
+    internal static AuthenticatorTransport[]? ParseTransports(string? transports)
+    {
+        if (string.IsNullOrWhiteSpace(transports))
+            return null;
+
+        var result = new List<AuthenticatorTransport>();
+        foreach (var value in transports.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
-            Id = model.PublicKeyId,
-            Transports = transports,
-            Type = model.Type ?? PublicKeyCredentialType.PublicKey
-        };
+            if (Enum.TryParse<AuthenticatorTransport>(value, ignoreCase: true, out var parsed) && Enum.IsDefined(parsed))
+            {
+                result.Add(parsed);
+                continue;
+            }
+
+            try
+            {
+                result.Add(value.ToEnum<AuthenticatorTransport>());
+            }
+            catch (ArgumentException)
+            {
+                // Unknown transport (e.g. added by a newer authenticator): ignore it, it is only a hint for the client.
+            }
+        }
+
+        return result.ToArray();
     }
 }
