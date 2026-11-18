@@ -1,3 +1,29 @@
+## [4.0.0](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v3.0.0...v4.0.0) (2026-11-18)
+
+### ⚠ BREAKING CHANGES
+
+* targets .NET 10 and Fido2 4 only. Fido2NetLib.Development.StoredCredential was replaced by
+NetDevPack.Fido2.EntityFramework.Store.Model.StoredCredential. IFido2Store.UpdateCounter has a new optional
+isBackedUp parameter and GetCredentialByPublicKeyIdAsync returns a nullable value. The StoredCredentialDetail
+table gets two new non-nullable bool columns (IsBackupEligible, IsBackedUp) with default false: add an EF Core
+migration; no existing column is renamed or removed.
+
+* ci: use conventionalcommits release preset
+
+* ci: publish to NuGet with trusted publishing
+
+nuget.org API keys expire and the org key already did, which made the
+last releases fail with 403. Publish with NuGet/login (OIDC) instead:
+the job gets a short-lived key from the trusted publishing policy for
+this repository and workflow file.
+
+Also adds a workflow_dispatch input to publish an existing release tag
+again, since re-running the job skips the push once the release exists.
+
+### Features
+
+* target .NET 10 and migrate to Fido2 4 ([#5](https://github.com/NetDevPack/Fido2.EntityFramework.Store/issues/5)) ([d920813](https://github.com/NetDevPack/Fido2.EntityFramework.Store/commit/d9208137b6ac617de8ca7d10b0b177f190418377))
+
 # [3.0.0](https://github.com/NetDevPack/Fido2.EntityFramework.Store/compare/v2.0.0...v3.0.0) (2026-02-05)
 
 
